@@ -1,98 +1,96 @@
 package org.taulin.component.impl;
 
+import cloud.prefab.sse.SSEHandler;
+import cloud.prefab.sse.events.Event;
 import com.google.inject.Inject;
 import com.google.inject.name.Named;
-import jakarta.ws.rs.client.Client;
-import jakarta.ws.rs.sse.InboundSseEvent;
-import jakarta.ws.rs.sse.SseEventSource;
 import lombok.extern.slf4j.Slf4j;
 import org.taulin.component.EventProcessorWorker;
-import org.taulin.component.RecentChangeEventDeserializer;
-import org.taulin.component.RecentChangeEventProducer;
-import org.taulin.model.RecentChangeEvent;
 
-import java.util.Optional;
+import java.io.IOException;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.concurrent.Executors;
+import java.util.concurrent.Flow;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+
+import static cloud.prefab.sse.SSEHandler.EVENT_STREAM_MEDIA_TYPE;
 
 @Slf4j
 public class EventProcessorWorkerImpl implements EventProcessorWorker {
     private final String wikimediaEventsUrl;
-    private final Client sseClient;
-    private final RecentChangeEventDeserializer deserializer;
     private final ScheduledExecutorService executorService;
-    private final SseEventSource sseEventSource;
-    private final RecentChangeEventProducer recentChangeEventProducer;
+    private final SSEHandler sseHandler;
+    private final Flow.Subscriber<Event> recentChangeEventSubscriber;
+    private final HttpClient httpClient;
 
     @Inject
-    public EventProcessorWorkerImpl(@Named("wikimedia.events.url") String wikimediaEventsUrl, Client sseClient,
-                                    RecentChangeEventDeserializer deserializer,
-                                    RecentChangeEventProducer recentChangeEventProducer) {
+    public EventProcessorWorkerImpl(@Named("wikimedia.events.url") String wikimediaEventsUrl,
+                                    Flow.Subscriber<Event> recentChangeEventSubscriber,
+                                    HttpClient httpClient) {
         this.wikimediaEventsUrl = wikimediaEventsUrl;
-        this.sseClient = sseClient;
-        this.deserializer = deserializer;
         this.executorService = Executors.newSingleThreadScheduledExecutor();
-        this.sseEventSource = buildEventSource();
-        this.recentChangeEventProducer = recentChangeEventProducer;
+        this.sseHandler = new SSEHandler();
+        this.recentChangeEventSubscriber = recentChangeEventSubscriber;
+        this.httpClient = httpClient;
     }
 
     @Override
     public void start() {
-        sseEventSource.register(this::onEvent, this::onError, this::onComplete);
-
-        executorService.scheduleWithFixedDelay(() -> processEvents(sseEventSource), 0L, 10L,
+        sseHandler.subscribe(recentChangeEventSubscriber);
+        executorService.scheduleWithFixedDelay(() -> processEvents(sseHandler), 0L, 10L,
                 TimeUnit.MILLISECONDS);
     }
 
-    private SseEventSource buildEventSource() {
-        return SseEventSource.target(sseClient.target(wikimediaEventsUrl))
-                .reconnectingEvery(500, TimeUnit.MILLISECONDS)
-                .build();
-    }
-
-    private void processEvents(final SseEventSource sseEventSource) {
-        if (!sseEventSource.isOpen()) {
-            sseEventSource.open();
-        }
-
+    private void processEvents(final SSEHandler sseHandler) {
         try {
-            Thread.sleep(1500);
-        } catch (InterruptedException e) {
-            log.error("Error while waiting for events: ", e);
+            httpClient.send(buildRequest(), HttpResponse.BodyHandlers.fromLineSubscriber(sseHandler));
+        } catch (IOException | InterruptedException e) {
+            log.error("Failed to start request for events: ", e);
         }
     }
 
-    private void onEvent(InboundSseEvent event) {
-        Optional<RecentChangeEvent> recentChangeEvent = deserializer.deserialize(event.readData());
-        if (recentChangeEvent.isPresent()) {
-            log.info("New recent change event received: {}", recentChangeEvent);
-            recentChangeEventProducer.send(recentChangeEvent.get());
-        }
-    }
-
-    private void onError(Throwable e) {
-        log.error("Error occurred while consuming event: ", e);
-    }
-
-    private void onComplete() {
-        log.info("Done consuming events from server");
+    private HttpRequest buildRequest() {
+        return HttpRequest
+                .newBuilder()
+                .header("Accept", EVENT_STREAM_MEDIA_TYPE)
+                .timeout(Duration.ofMillis(1500))
+                .uri(URI.create(wikimediaEventsUrl))
+                .build();
     }
 
     @Override
     public void close() {
         try {
-            executorService.shutdown();
-
-            if (!executorService.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
-                log.info("Executor Service shut down");
-
-                if (sseEventSource.isOpen()) {
-                    sseEventSource.close(1000, TimeUnit.MILLISECONDS);
-                }
-            }
+            terminateExecutor();
+            terminateHttpClient();
         } catch (InterruptedException e) {
             log.error("Failed to shutdown Executor Service", e);
+        }
+    }
+
+    private void terminateExecutor() throws InterruptedException {
+        executorService.shutdown();
+        if (!executorService.awaitTermination(1000, TimeUnit.MILLISECONDS)) {
+            log.info("Executor Service shut down");
+        }
+    }
+
+    private void terminateHttpClient() throws InterruptedException {
+        httpClient.close();
+        if (!httpClient.awaitTermination(Duration.ofMillis(1000))) {
+            log.info("Http Client shut down");
+        }
+    }
+
+    private void terminateSseHandler() {
+        sseHandler.close();
+        if (sseHandler.isClosed()) {
+            log.info("SSE Handler shut down");
         }
     }
 }

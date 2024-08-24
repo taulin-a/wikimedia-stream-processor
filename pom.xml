@@ -34,14 +34,9 @@
     <dependencies>
         <!-- SSE client -->
         <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-rs-client</artifactId>
-            <version>${cxf.rt.rs.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.cxf</groupId>
-            <artifactId>cxf-rt-rs-sse</artifactId>
-            <version>${cxf.rt.rs.version}</version>
+            <groupId>cloud.prefab</groupId>
+            <artifactId>sse-handler</artifactId>
+            <version>1.0.0</version>
         </dependency>
         <dependency>
             <groupId>com.fasterxml.jackson.core</groupId>
