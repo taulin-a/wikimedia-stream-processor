@@ -68,6 +68,7 @@ public class EventProcessorWorkerImpl implements EventProcessorWorker {
         try {
             terminateExecutor();
             terminateHttpClient();
+            terminateSseHandler();
         } catch (InterruptedException e) {
             log.error("Failed to shutdown Executor Service", e);
         }
