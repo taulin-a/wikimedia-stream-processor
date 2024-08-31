@@ -20,12 +20,16 @@ public class RecentChangeEventProducerImpl implements RecentChangeEventProducer 
 
     @Inject
     public RecentChangeEventProducerImpl(@Named("bootstrap.servers") String bootstrapServers,
-                                         @Named("topic.name") String topicName) {
+                                         @Named("topic.name") String topicName,
+                                         @Named("kafka.producer.retries") String retries,
+                                         @Named("kafka.producer.delivery.timeout") String deliveryTimeout) {
         final Properties properties = new Properties();
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaJsonSerializer.class.getName());
         properties.setProperty(ProducerConfig.ACKS_CONFIG, DEFAULT_ACK_CONFIG);
+        properties.setProperty(ProducerConfig.RETRIES_CONFIG, retries);
+        properties.setProperty(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, deliveryTimeout);
 
         producer = new KafkaProducer<>(properties);
         this.topicName = topicName;
