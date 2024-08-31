@@ -13,6 +13,8 @@ import org.taulin.model.RecentChangeEvent;
 import java.util.Properties;
 
 public class RecentChangeEventProducerImpl implements RecentChangeEventProducer {
+    private static final String DEFAULT_ACK_CONFIG = "-1";
+
     private final KafkaProducer<Long, RecentChangeEvent> producer;
     private final String topicName;
 
@@ -23,6 +25,7 @@ public class RecentChangeEventProducerImpl implements RecentChangeEventProducer 
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class.getName());
         properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, KafkaJsonSerializer.class.getName());
+        properties.setProperty(ProducerConfig.ACKS_CONFIG, DEFAULT_ACK_CONFIG);
 
         producer = new KafkaProducer<>(properties);
         this.topicName = topicName;
