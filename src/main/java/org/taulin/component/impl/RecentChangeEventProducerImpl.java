@@ -7,6 +7,7 @@ import org.apache.kafka.clients.producer.KafkaProducer;
 import org.apache.kafka.clients.producer.ProducerConfig;
 import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.LongSerializer;
+import org.rocksdb.CompressionType;
 import org.taulin.component.RecentChangeEventProducer;
 import org.taulin.model.RecentChangeEvent;
 
@@ -14,6 +15,9 @@ import java.util.Properties;
 
 public class RecentChangeEventProducerImpl implements RecentChangeEventProducer {
     private static final String DEFAULT_ACK_CONFIG = "-1";
+    private static final String DEFAULT_IDEMPOTENCE_CONFIG = "true";
+    private static final String DEFAULT_LINGER_CONFIG = "20";
+    private static final String DEFAULT_BATCH_SIZE = Integer.toString(32 * 1024);
 
     private final KafkaProducer<Long, RecentChangeEvent> producer;
     private final String topicName;
@@ -30,6 +34,10 @@ public class RecentChangeEventProducerImpl implements RecentChangeEventProducer 
         properties.setProperty(ProducerConfig.ACKS_CONFIG, DEFAULT_ACK_CONFIG);
         properties.setProperty(ProducerConfig.RETRIES_CONFIG, retries);
         properties.setProperty(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, deliveryTimeout);
+        properties.setProperty(ProducerConfig.ENABLE_IDEMPOTENCE_CONFIG, DEFAULT_IDEMPOTENCE_CONFIG);
+        properties.setProperty(ProducerConfig.COMPRESSION_TYPE_CONFIG, CompressionType.SNAPPY_COMPRESSION.getLibraryName());
+        properties.setProperty(ProducerConfig.LINGER_MS_CONFIG, DEFAULT_LINGER_CONFIG);
+        properties.setProperty(ProducerConfig.BATCH_SIZE_CONFIG, DEFAULT_BATCH_SIZE);
 
         producer = new KafkaProducer<>(properties);
         this.topicName = topicName;
