@@ -3,7 +3,6 @@ package org.taulin.component.impl;
 import cloud.prefab.sse.events.DataEvent;
 import cloud.prefab.sse.events.Event;
 import com.google.inject.Inject;
-import com.google.inject.name.Named;
 import lombok.extern.slf4j.Slf4j;
 import org.taulin.component.RecentChangeEventDeserializer;
 import org.taulin.component.RecentChangeEventProducer;
@@ -14,15 +13,12 @@ import java.util.concurrent.Flow;
 
 @Slf4j
 public class RecentChangeEventSubscriberImpl implements Flow.Subscriber<Event> {
-    private final Integer batchSize;
     private final RecentChangeEventDeserializer deserializer;
     private final RecentChangeEventProducer recentChangeEventProducer;
 
     @Inject
-    public RecentChangeEventSubscriberImpl(@Named("event.batch.size") Integer batchSize,
-                                           RecentChangeEventDeserializer deserializer,
+    public RecentChangeEventSubscriberImpl(RecentChangeEventDeserializer deserializer,
                                            RecentChangeEventProducer recentChangeEventProducer) {
-        this.batchSize = batchSize;
         this.deserializer = deserializer;
         this.recentChangeEventProducer = recentChangeEventProducer;
     }
@@ -30,7 +26,7 @@ public class RecentChangeEventSubscriberImpl implements Flow.Subscriber<Event> {
     @Override
     public void onSubscribe(Flow.Subscription subscription) {
         log.info("Subscribed to new event source");
-        subscription.request(batchSize);
+        subscription.request(Long.MAX_VALUE);
     }
 
     @Override

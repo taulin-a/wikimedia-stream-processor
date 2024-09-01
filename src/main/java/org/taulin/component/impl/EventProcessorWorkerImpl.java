@@ -13,9 +13,9 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.time.Duration;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Flow;
-import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
 import static cloud.prefab.sse.SSEHandler.EVENT_STREAM_MEDIA_TYPE;
@@ -23,7 +23,7 @@ import static cloud.prefab.sse.SSEHandler.EVENT_STREAM_MEDIA_TYPE;
 @Slf4j
 public class EventProcessorWorkerImpl implements EventProcessorWorker {
     private final String wikimediaEventsUrl;
-    private final ScheduledExecutorService executorService;
+    private final ExecutorService executorService;
     private final SSEHandler sseHandler;
     private final Flow.Subscriber<Event> recentChangeEventSubscriber;
     private final HttpClient httpClient;
@@ -42,8 +42,7 @@ public class EventProcessorWorkerImpl implements EventProcessorWorker {
     @Override
     public void start() {
         sseHandler.subscribe(recentChangeEventSubscriber);
-        executorService.scheduleWithFixedDelay(() -> processEvents(sseHandler), 0L, 10L,
-                TimeUnit.MILLISECONDS);
+        executorService.execute(() -> processEvents(sseHandler));
     }
 
     private void processEvents(final SSEHandler sseHandler) {
