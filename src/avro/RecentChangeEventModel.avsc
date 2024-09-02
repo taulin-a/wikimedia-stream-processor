@@ -1,0 +1,91 @@
+{
+  "namespace": "org.taulin.model",
+  "type": "record",
+  "name": "RecentChangeEvent",
+  "fields": [
+    {
+      "name": "schema",
+      "type": "string"
+    },
+    {
+      "name": "meta",
+      "type": "Meta"
+    },
+    {
+      "name": "id",
+      "type": "long"
+    },
+    {
+      "name": "type",
+      "type": "string"
+    },
+    {
+      "name": "namespace",
+      "type": "int"
+    },
+    {
+      "name": "title",
+      "type": "string"
+    },
+    {
+      "name": "titleUrl",
+      "type": "string"
+    },
+    {
+      "name": "comment",
+      "type": "string"
+    },
+    {
+      "name": "timestamp",
+      "type": "long"
+    },
+    {
+      "name": "user",
+      "type": "string"
+    },
+    {
+      "name": "bot",
+      "type": "boolean"
+    },
+    {
+      "name": "notifyUrl",
+      "type": "string"
+    },
+    {
+      "name": "serverUrl",
+      "type": "string"
+    },
+    {
+      "name": "serverName",
+      "type": "string"
+    },
+    {
+      "name": "serverScriptPath",
+      "type": "string"
+    },
+    {
+      "name": "wiki",
+      "type": "string"
+    },
+    {
+      "name": "parsedComment",
+      "type": "string"
+    },
+    {
+      "name": "minor",
+      "type": "boolean"
+    },
+    {
+      "name": "patrolled",
+      "type": "boolean"
+    },
+    {
+      "name": "length",
+      "type": "Revision"
+    },
+    {
+      "name": "revision",
+      "type": "Revision"
+    }
+  ]
+}

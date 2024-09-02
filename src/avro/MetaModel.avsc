@@ -1,0 +1,43 @@
+{
+  "namespace": "org.taulin.model",
+  "type": "record",
+  "name": "Meta",
+  "fields": [
+    {
+      "name": "uri",
+      "type": "string"
+    },
+    {
+      "name": "requestId",
+      "type": "string"
+    },
+    {
+      "name": "id",
+      "type": "string"
+    },
+    {
+      "name": "dt",
+      "type": "string"
+    },
+    {
+      "name": "domain",
+      "type": "string"
+    },
+    {
+      "name": "stream",
+      "type": "string"
+    },
+    {
+      "name": "topic",
+      "type": "string"
+    },
+    {
+      "name": "partition",
+      "type": "int"
+    },
+    {
+      "name": "offset",
+      "type": "long"
+    }
+  ]
+}
