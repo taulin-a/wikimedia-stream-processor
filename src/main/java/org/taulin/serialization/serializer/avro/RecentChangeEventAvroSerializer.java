@@ -1,4 +1,4 @@
-package org.taulin.serializer;
+package org.taulin.serialization.serializer.avro;
 
 import lombok.extern.slf4j.Slf4j;
 import org.apache.avro.generic.GenericDatumWriter;
@@ -12,7 +12,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 
 @Slf4j
-public class AvroRecentChangeEventSerializer implements Serializer<RecentChangeEvent> {
+public class RecentChangeEventAvroSerializer implements Serializer<RecentChangeEvent> {
     @Override
     public byte[] serialize(String topic, final RecentChangeEvent event) {
         try (final ByteArrayOutputStream output = new ByteArrayOutputStream()) {

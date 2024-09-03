@@ -8,9 +8,11 @@ import com.google.inject.TypeLiteral;
 import com.google.inject.name.Names;
 import lombok.extern.slf4j.Slf4j;
 import org.taulin.component.EventProcessorWorker;
-import org.taulin.component.RecentChangeEventDeserializer;
+import org.taulin.mapper.RecentChangeEventMapper;
+import org.taulin.mapper.RecentChangeEventMapperImpl;
+import org.taulin.serialization.deserializer.json.RecentChangeEventJsonDeserializer;
 import org.taulin.component.RecentChangeEventProducer;
-import org.taulin.component.impl.RecentChangeEventDeserializerImpl;
+import org.taulin.serialization.deserializer.json.impl.RecentChangeEventJsonDeserializerImpl;
 import org.taulin.component.impl.EventProcessorWorkerImpl;
 import org.taulin.component.impl.RecentChangeEventProducerImpl;
 import org.taulin.component.impl.RecentChangeEventSubscriberImpl;
@@ -32,7 +34,8 @@ public final class ProcessorModule extends AbstractModule {
         bind(new TypeLiteral<Flow.Subscriber<Event>>() {}).to(RecentChangeEventSubscriberImpl.class);
         bind(ObjectMapper.class).toInstance(new ObjectMapper()
                 .configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false));
-        bind(RecentChangeEventDeserializer.class).to(RecentChangeEventDeserializerImpl.class);
+        bind(RecentChangeEventJsonDeserializer.class).to(RecentChangeEventJsonDeserializerImpl.class);
+        bind(RecentChangeEventMapper.class).to(RecentChangeEventMapperImpl.class);
         bind(RecentChangeEventProducer.class).to(RecentChangeEventProducerImpl.class);
         Names.bindProperties(binder(), loadApplicationProperties());
     }

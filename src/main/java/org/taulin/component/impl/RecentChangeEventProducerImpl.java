@@ -8,8 +8,10 @@ import org.apache.kafka.clients.producer.ProducerRecord;
 import org.apache.kafka.common.serialization.LongSerializer;
 import org.rocksdb.CompressionType;
 import org.taulin.component.RecentChangeEventProducer;
+import org.taulin.mapper.RecentChangeEventMapper;
+import org.taulin.model.RecentChangeEvent;
 import org.taulin.model.RecentChangeEventDTO;
-import org.taulin.serializer.AvroRecentChangeEventSerializer;
+import org.taulin.serialization.serializer.avro.RecentChangeEventAvroSerializer;
 
 import java.util.Properties;
 
@@ -19,18 +21,20 @@ public class RecentChangeEventProducerImpl implements RecentChangeEventProducer 
     private static final String DEFAULT_LINGER_CONFIG = "20";
     private static final String DEFAULT_BATCH_SIZE = Integer.toString(32 * 1024);
 
-    private final KafkaProducer<Long, RecentChangeEventDTO> producer;
+    private final KafkaProducer<Long, RecentChangeEvent> producer;
     private final String topicName;
+    private final RecentChangeEventMapper recentChangeEventMapper;
 
     @Inject
     public RecentChangeEventProducerImpl(@Named("bootstrap.servers") String bootstrapServers,
                                          @Named("topic.name") String topicName,
                                          @Named("kafka.producer.retries") String retries,
-                                         @Named("kafka.producer.delivery.timeout") String deliveryTimeout) {
+                                         @Named("kafka.producer.delivery.timeout") String deliveryTimeout,
+                                         RecentChangeEventMapper recentChangeEventMapper) {
         final Properties properties = new Properties();
         properties.setProperty(ProducerConfig.BOOTSTRAP_SERVERS_CONFIG, bootstrapServers);
         properties.setProperty(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, LongSerializer.class.getName());
-        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, AvroRecentChangeEventSerializer.class.getName());
+        properties.setProperty(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, RecentChangeEventAvroSerializer.class.getName());
         properties.setProperty(ProducerConfig.ACKS_CONFIG, DEFAULT_ACK_CONFIG);
         properties.setProperty(ProducerConfig.RETRIES_CONFIG, retries);
         properties.setProperty(ProducerConfig.DELIVERY_TIMEOUT_MS_CONFIG, deliveryTimeout);
@@ -41,12 +45,13 @@ public class RecentChangeEventProducerImpl implements RecentChangeEventProducer 
 
         producer = new KafkaProducer<>(properties);
         this.topicName = topicName;
+        this.recentChangeEventMapper = recentChangeEventMapper;
     }
 
     @Override
     public void send(RecentChangeEventDTO recentChangeEvent) {
-        final ProducerRecord<Long, RecentChangeEventDTO> record = new ProducerRecord<>(topicName, recentChangeEvent.id(),
-                recentChangeEvent);
+        final ProducerRecord<Long, RecentChangeEvent> record = new ProducerRecord<>(topicName, recentChangeEvent.id(),
+                recentChangeEventMapper.recentChangeEventDtoToRecentChangeEvent(recentChangeEvent));
         producer.send(record);
     }
 }

@@ -4,7 +4,7 @@ import cloud.prefab.sse.events.DataEvent;
 import cloud.prefab.sse.events.Event;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
-import org.taulin.component.RecentChangeEventDeserializer;
+import org.taulin.serialization.deserializer.json.RecentChangeEventJsonDeserializer;
 import org.taulin.component.RecentChangeEventProducer;
 import org.taulin.model.RecentChangeEventDTO;
 
@@ -13,11 +13,11 @@ import java.util.concurrent.Flow;
 
 @Slf4j
 public class RecentChangeEventSubscriberImpl implements Flow.Subscriber<Event> {
-    private final RecentChangeEventDeserializer deserializer;
+    private final RecentChangeEventJsonDeserializer deserializer;
     private final RecentChangeEventProducer recentChangeEventProducer;
 
     @Inject
-    public RecentChangeEventSubscriberImpl(RecentChangeEventDeserializer deserializer,
+    public RecentChangeEventSubscriberImpl(RecentChangeEventJsonDeserializer deserializer,
                                            RecentChangeEventProducer recentChangeEventProducer) {
         this.deserializer = deserializer;
         this.recentChangeEventProducer = recentChangeEventProducer;
