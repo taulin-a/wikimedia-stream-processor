@@ -5,11 +5,19 @@
   "fields": [
     {
       "name": "old",
-      "type": "long"
+      "type": [
+        "null",
+        "long"
+      ],
+      "default": null
     },
     {
       "name": "new",
-      "type": "long"
+      "type": [
+        "null",
+        "long"
+      ],
+      "default": null
     }
   ]
 }

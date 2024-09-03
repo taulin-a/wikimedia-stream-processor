@@ -5,87 +5,171 @@
   "fields": [
     {
       "name": "schema",
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
     },
     {
       "name": "meta",
-      "type": "Meta"
+      "type": [
+        "null",
+        "Meta"
+      ],
+      "default": null
     },
     {
       "name": "id",
-      "type": "long"
+      "type": [
+        "null",
+        "long"
+      ],
+      "default": null
     },
     {
       "name": "type",
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
     },
     {
       "name": "namespace",
-      "type": "int"
+      "type": [
+        "null",
+        "int"
+      ],
+      "default": null
     },
     {
       "name": "title",
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
     },
     {
       "name": "titleUrl",
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
     },
     {
       "name": "comment",
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
     },
     {
       "name": "timestamp",
-      "type": "long"
+      "type": [
+        "null",
+        "long"
+      ],
+      "default": null
     },
     {
       "name": "user",
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
     },
     {
       "name": "bot",
-      "type": "boolean"
+      "type": [
+        "null",
+        "boolean"
+      ],
+      "default": null
     },
     {
       "name": "notifyUrl",
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
     },
     {
       "name": "serverUrl",
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
     },
     {
       "name": "serverName",
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
     },
     {
       "name": "serverScriptPath",
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
     },
     {
       "name": "wiki",
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
     },
     {
       "name": "parsedComment",
-      "type": "string"
+      "type": [
+        "null",
+        "string"
+      ],
+      "default": null
     },
     {
       "name": "minor",
-      "type": "boolean"
+      "type": [
+        "null",
+        "boolean"
+      ],
+      "default": null
     },
     {
       "name": "patrolled",
-      "type": "boolean"
+      "type": [
+        "null",
+        "boolean"
+      ],
+      "default": null
     },
     {
       "name": "length",
-      "type": "Revision"
+      "type": [
+        "null",
+        "Revision"
+      ],
+      "default": null
     },
     {
       "name": "revision",
-      "type": "Revision"
+      "type": [
+        "null",
+        "Revision"
+      ],
+      "default": null
     }
   ]
 }
