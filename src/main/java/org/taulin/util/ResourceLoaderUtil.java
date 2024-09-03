@@ -1,7 +1,7 @@
 package org.taulin.util;
 
 import lombok.experimental.UtilityClass;
-import org.apache.commons.io.IOUtils;
+import org.apache.commons.compress.utils.IOUtils;
 
 import java.io.File;
 import java.io.FileOutputStream;

@@ -1,7 +1,7 @@
 package org.taulin.component;
 
-import org.taulin.model.RecentChangeEvent;
+import org.taulin.model.RecentChangeEventDTO;
 
 public interface RecentChangeEventProducer {
-    void send(RecentChangeEvent recentChangeEvent);
+    void send(RecentChangeEventDTO recentChangeEvent);
 }

@@ -6,7 +6,7 @@ import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.taulin.component.RecentChangeEventDeserializer;
 import org.taulin.component.RecentChangeEventProducer;
-import org.taulin.model.RecentChangeEvent;
+import org.taulin.model.RecentChangeEventDTO;
 
 import java.util.Optional;
 import java.util.concurrent.Flow;
@@ -32,7 +32,7 @@ public class RecentChangeEventSubscriberImpl implements Flow.Subscriber<Event> {
     @Override
     public void onNext(Event event) {
         if (!(event instanceof DataEvent dataEvent)) return;
-        Optional<RecentChangeEvent> recentChangeEvent = deserializer.deserialize(dataEvent.getData());
+        Optional<RecentChangeEventDTO> recentChangeEvent = deserializer.deserialize(dataEvent.getData());
         if (recentChangeEvent.isPresent()) {
             log.info("New recent change event received: {}", recentChangeEvent);
             recentChangeEventProducer.send(recentChangeEvent.get());

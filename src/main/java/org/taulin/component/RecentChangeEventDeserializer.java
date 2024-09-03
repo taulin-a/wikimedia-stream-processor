@@ -1,9 +1,9 @@
 package org.taulin.component;
 
-import org.taulin.model.RecentChangeEvent;
+import org.taulin.model.RecentChangeEventDTO;
 
 import java.util.Optional;
 
 public interface RecentChangeEventDeserializer {
-    Optional<RecentChangeEvent> deserialize(String eventStr);
+    Optional<RecentChangeEventDTO> deserialize(String eventStr);
 }

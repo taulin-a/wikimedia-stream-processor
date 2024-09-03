@@ -2,7 +2,7 @@ package org.taulin.model;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 
-public record Meta(
+public record MetaDTO(
         @JsonProperty("uri") String uri,
         @JsonProperty("request_id") String requestId,
         @JsonProperty("id") String id,

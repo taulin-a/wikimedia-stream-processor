@@ -4,7 +4,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
 @Builder
-public record Revision(
+public record RevisionDTO(
         @JsonProperty("old") Long old,
         @JsonProperty("new") Long nu) {
     @Override

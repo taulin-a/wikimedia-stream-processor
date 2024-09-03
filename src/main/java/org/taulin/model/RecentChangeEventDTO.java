@@ -4,9 +4,9 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Builder;
 
 @Builder
-public record RecentChangeEvent(
+public record RecentChangeEventDTO(
         @JsonProperty("$schema") String schema,
-        @JsonProperty("meta") Meta meta,
+        @JsonProperty("meta") MetaDTO meta,
         @JsonProperty("id") Long id,
         @JsonProperty("type") String type,
         @JsonProperty("namespace") Integer namespace,
@@ -24,8 +24,8 @@ public record RecentChangeEvent(
         @JsonProperty("parsedcomment") String parsedComment,
         @JsonProperty("minor") Boolean minor,
         @JsonProperty("patrolled") Boolean patrolled,
-        @JsonProperty("length") Revision length,
-        @JsonProperty("revision") Revision revision) {
+        @JsonProperty("length") RevisionDTO length,
+        @JsonProperty("revision") RevisionDTO revision) {
     @Override
     public String toString() {
         return "RecentChangeEvent{" +

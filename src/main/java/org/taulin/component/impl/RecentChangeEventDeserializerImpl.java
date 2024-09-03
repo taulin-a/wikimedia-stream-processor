@@ -5,7 +5,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.google.inject.Inject;
 import lombok.extern.slf4j.Slf4j;
 import org.taulin.component.RecentChangeEventDeserializer;
-import org.taulin.model.RecentChangeEvent;
+import org.taulin.model.RecentChangeEventDTO;
 
 import java.util.Objects;
 import java.util.Optional;
@@ -20,11 +20,11 @@ public class RecentChangeEventDeserializerImpl implements RecentChangeEventDeser
     }
 
     @Override
-    public Optional<RecentChangeEvent> deserialize(String eventStr) {
+    public Optional<RecentChangeEventDTO> deserialize(String eventStr) {
         if (Objects.isNull(eventStr)) return Optional.empty();
 
         try {
-            return Optional.of(mapper.readValue(eventStr, RecentChangeEvent.class));
+            return Optional.of(mapper.readValue(eventStr, RecentChangeEventDTO.class));
         } catch (JsonProcessingException e) {
             log.error("Error deserializing event: {}", eventStr, e);
             return Optional.empty();
