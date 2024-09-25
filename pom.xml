@@ -32,6 +32,13 @@
         </repository>
     </repositories>
 
+    <pluginRepositories>
+        <pluginRepository>
+            <id>confluent</id>
+            <url>https://packages.confluent.io/maven/</url>
+        </pluginRepository>
+    </pluginRepositories>
+
     <dependencies>
         <!-- SSE client -->
         <dependency>
@@ -151,6 +158,41 @@
                         </configuration>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>io.confluent</groupId>
+                <artifactId>kafka-schema-registry-maven-plugin</artifactId>
+                <version>7.7.1</version>
+                <configuration>
+                    <schemaRegistryUrls>
+                        <param>http://localhost:8081/</param>
+                    </schemaRegistryUrls>
+                    <subjects>
+                        <Meta>${project.basedir}/src/main/avro/MetaModel.avsc</Meta>
+                        <Revision>${project.basedir}/src/main/avro/RevisionModel.avsc</Revision>
+                        <RecentChangeEvent>${project.basedir}/src/main/avro/RecentChangeEventModel.avsc</RecentChangeEvent>
+                    </subjects>
+                    <schemaTypes>
+                        <Meta>AVRO</Meta>
+                        <Revision>AVRO</Revision>
+                        <RecentChangeEvent>AVRO</RecentChangeEvent>
+                    </schemaTypes>
+                    <references>
+                        <RecentChangeEvent>
+                            <reference>
+                                <name>Meta</name>
+                                <subject>Meta</subject>
+                            </reference>
+                            <reference>
+                                <name>Revision</name>
+                                <subject>Revision</subject>
+                            </reference>
+                        </RecentChangeEvent>
+                    </references>
+                </configuration>
+                <goals>
+                    <goal>register</goal>
+                </goals>
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
