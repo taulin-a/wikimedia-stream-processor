@@ -68,6 +68,11 @@
             <artifactId>kafka-streams</artifactId>
             <version>${kafka.sdk.version}</version>
         </dependency>
+        <dependency>
+            <groupId>io.confluent</groupId>
+            <artifactId>kafka-avro-serializer</artifactId>
+            <version>7.7.1</version>
+        </dependency>
 
         <!-- Avro -->
         <dependency>
@@ -170,15 +175,15 @@
                     <subjects>
                         <Meta>${project.basedir}/src/main/avro/MetaModel.avsc</Meta>
                         <Revision>${project.basedir}/src/main/avro/RevisionModel.avsc</Revision>
-                        <RecentChangeEvent>${project.basedir}/src/main/avro/RecentChangeEventModel.avsc</RecentChangeEvent>
+                        <wikimedia-recent-change-events-value>${project.basedir}/src/main/avro/RecentChangeEventModel.avsc</wikimedia-recent-change-events-value>
                     </subjects>
                     <schemaTypes>
                         <Meta>AVRO</Meta>
                         <Revision>AVRO</Revision>
-                        <RecentChangeEvent>AVRO</RecentChangeEvent>
+                        <wikimedia-recent-change-events-value>AVRO</wikimedia-recent-change-events-value>
                     </schemaTypes>
                     <references>
-                        <RecentChangeEvent>
+                        <wikimedia-recent-change-events-value>
                             <reference>
                                 <name>Meta</name>
                                 <subject>Meta</subject>
@@ -187,7 +192,7 @@
                                 <name>Revision</name>
                                 <subject>Revision</subject>
                             </reference>
-                        </RecentChangeEvent>
+                        </wikimedia-recent-change-events-value>
                     </references>
                 </configuration>
                 <goals>
