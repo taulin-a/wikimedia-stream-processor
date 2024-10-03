@@ -3,6 +3,7 @@ package org.taulin.component.impl;
 import cloud.prefab.sse.events.DataEvent;
 import cloud.prefab.sse.events.Event;
 import com.google.inject.Inject;
+import com.google.inject.name.Named;
 import lombok.extern.slf4j.Slf4j;
 import org.taulin.serialization.deserializer.json.RecentChangeEventJsonDeserializer;
 import org.taulin.component.RecentChangeEventProducer;
@@ -15,12 +16,19 @@ import java.util.concurrent.Flow;
 public class RecentChangeEventSubscriberImpl implements Flow.Subscriber<Event> {
     private final RecentChangeEventJsonDeserializer deserializer;
     private final RecentChangeEventProducer recentChangeEventProducer;
+    private final Integer batchSize;
+    private final Long sleepBetweenBatches;
+    private Integer currentEvent = 0;
 
     @Inject
     public RecentChangeEventSubscriberImpl(RecentChangeEventJsonDeserializer deserializer,
-                                           RecentChangeEventProducer recentChangeEventProducer) {
+                                           RecentChangeEventProducer recentChangeEventProducer,
+                                           @Named("wikimedia.subscriber.batch.size") Integer batchSize,
+                                           @Named("wikimedia.subscriber.sleep.between.batches") String sleepBetweenBatchesStr) {
         this.deserializer = deserializer;
         this.recentChangeEventProducer = recentChangeEventProducer;
+        this.batchSize = batchSize;
+        this.sleepBetweenBatches = Long.valueOf(sleepBetweenBatchesStr);
     }
 
     @Override
@@ -36,6 +44,33 @@ public class RecentChangeEventSubscriberImpl implements Flow.Subscriber<Event> {
         if (recentChangeEvent.isPresent()) {
             log.info("New recent change event received: {}", recentChangeEvent);
             recentChangeEventProducer.send(recentChangeEvent.get());
+        }
+
+        checkBatchSize();
+    }
+
+    private void addCurrentEvent() {
+        currentEvent++;
+    }
+
+    private void resetCurrentEvent() {
+        currentEvent = 0;
+    }
+
+    private void sleep() {
+        try {
+            Thread.sleep(sleepBetweenBatches);
+        } catch (InterruptedException e) {
+            log.error("Failed while sleeping between batches");
+        }
+    }
+
+    private void checkBatchSize() {
+        addCurrentEvent();
+
+        if (currentEvent >= batchSize) {
+            sleep();
+            resetCurrentEvent();
         }
     }
 

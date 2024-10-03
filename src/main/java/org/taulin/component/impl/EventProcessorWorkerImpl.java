@@ -47,7 +47,8 @@ public class EventProcessorWorkerImpl implements EventProcessorWorker {
 
     private void processEvents(final SSEHandler sseHandler) {
         try {
-            httpClient.send(buildRequest(), HttpResponse.BodyHandlers.fromLineSubscriber(sseHandler));
+            httpClient.send(buildRequest(), HttpResponse.BodyHandlers.fromLineSubscriber(sseHandler,
+                    this::finishProcessing, null));
         } catch (IOException | InterruptedException e) {
             log.error("Failed to start request for events: ", e);
         }
@@ -60,6 +61,11 @@ public class EventProcessorWorkerImpl implements EventProcessorWorker {
                 .timeout(Duration.ofMillis(1500))
                 .uri(URI.create(wikimediaEventsUrl))
                 .build();
+    }
+
+    private HttpResponse.BodyHandler<Event> finishProcessing(SSEHandler subscriber) {
+        close();
+        return null;
     }
 
     @Override
