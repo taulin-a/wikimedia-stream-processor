@@ -15,7 +15,9 @@ import org.taulin.mapper.RecentChangeEventMapper;
 import org.taulin.model.RecentChangeEvent;
 import org.taulin.model.RecentChangeEventDTO;
 
+import java.util.Objects;
 import java.util.Properties;
+import java.util.UUID;
 
 public class RecentChangeEventProducerImpl implements RecentChangeEventProducer {
     private static final String DEFAULT_ACK_CONFIG = "-1";
@@ -57,8 +59,16 @@ public class RecentChangeEventProducerImpl implements RecentChangeEventProducer 
 
     @Override
     public void send(RecentChangeEventDTO recentChangeEvent) {
-        final ProducerRecord<Long, RecentChangeEvent> record = new ProducerRecord<>(topicName, recentChangeEvent.id(),
+        final ProducerRecord<Long, RecentChangeEvent> record = new ProducerRecord<>(
+                topicName,
+                getKeyFromEvent(recentChangeEvent),
                 recentChangeEventMapper.recentChangeEventDtoToRecentChangeEvent(recentChangeEvent));
         producer.send(record);
+    }
+
+    private static Long getKeyFromEvent(RecentChangeEventDTO recentChangeEvent) {
+        return Objects.nonNull(recentChangeEvent.id())
+                ? recentChangeEvent.id()
+                : UUID.randomUUID().getLeastSignificantBits();
     }
 }
